@@ -129,7 +129,22 @@ class _StudioHomeState extends State<StudioHome> {
     Expanded(child: Container(
       margin: const EdgeInsets.fromLTRB(14, 0, 14, 10), padding: const EdgeInsets.all(13), width: double.infinity,
       decoration: BoxDecoration(color: const Color(0xFF05090D), border: Border.all(color: const Color(0xFF26313C)), borderRadius: BorderRadius.circular(12)),
-      child: ListView(children: output.map((line) => Padding(padding: const EdgeInsets.only(bottom: 7), child: SelectableText(line, style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: line.startsWith('\$') ? const Color(0xFF55E69A) : const Color(0xFFD1DBE5)))).toList()),
+      child: ListView(
+        children: output.map((line) {
+          final isPrompt = line.startsWith('\$');
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 7),
+            child: SelectableText(
+              line,
+              style: TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 12,
+                color: isPrompt ? const Color(0xFF55E69A) : const Color(0xFFD1DBE5),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     )),
     Padding(padding: const EdgeInsets.fromLTRB(14, 0, 14, 14), child: Row(children: [
       const Text('\$', style: TextStyle(color: Color(0xFF55E69A), fontWeight: FontWeight.bold, fontSize: 18)), const SizedBox(width: 9),
