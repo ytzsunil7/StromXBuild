@@ -38,7 +38,7 @@ class _StudioHomeState extends State<StudioHome> {
     final cmd = command.text.trim();
     if (cmd.isEmpty || busy) return;
     command.clear();
-    setState(() { output.add('\$ \$cmd'); busy = true; });
+    setState(() { output.add('\$ $cmd'); busy = true; });
     try {
       if (cmd == 'help') {
         output.add('Supported: help, pwd, ls, date, whoami, uname, clear, echo TEXT');
@@ -50,9 +50,9 @@ class _StudioHomeState extends State<StudioHome> {
         output.add((result ?? '').trim().isEmpty ? '(no output)' : result!.trimRight());
       }
     } on PlatformException catch (e) {
-      output.add('Error: \${e.message ?? e.code}');
+      output.add('Error: ${e.message ?? e.code}');
     } catch (e) {
-      output.add('Command unavailable: \$e');
+      output.add('Command unavailable: $e');
     }
     if (mounted) setState(() => busy = false);
   }
@@ -62,9 +62,9 @@ class _StudioHomeState extends State<StudioHome> {
     try {
       final path = await _channel.invokeMethod<String>('saveFile', {'name': fileName, 'content': source});
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Saved: \${path ?? fileName}')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Saved: ${path ?? fileName}')));
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: \$e')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e')));
     }
   }
 
@@ -121,7 +121,7 @@ class _StudioHomeState extends State<StudioHome> {
     )),
     Padding(padding: const EdgeInsets.fromLTRB(14, 0, 14, 12), child: Row(children: [
       Expanded(child: OutlinedButton.icon(onPressed: saveFile, icon: const Icon(Icons.save), label: const Text('Save'))),
-      const SizedBox(width: 10), Expanded(child: FilledButton.icon(onPressed: () { setState(() => tab = 1); command.text = 'python \$fileName'; }, icon: const Icon(Icons.play_arrow), label: const Text('Run'))),
+      const SizedBox(width: 10), Expanded(child: FilledButton.icon(onPressed: () { setState(() => tab = 1); command.text = 'python $fileName'; }, icon: const Icon(Icons.play_arrow), label: const Text('Run'))),
     ])),
   ]);
 
