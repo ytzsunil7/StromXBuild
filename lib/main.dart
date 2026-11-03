@@ -38,7 +38,7 @@ class _StudioHomeState extends State<StudioHome> {
     final cmd = command.text.trim();
     if (cmd.isEmpty || busy) return;
     command.clear();
-    setState(() { output.add('$ $cmd'); busy = true; });
+    setState(() { output.add('\$ \$cmd'); busy = true; });
     try {
       if (cmd == 'help') {
         output.add('Supported: help, pwd, ls, date, whoami, uname, clear, echo TEXT');
@@ -50,9 +50,9 @@ class _StudioHomeState extends State<StudioHome> {
         output.add((result ?? '').trim().isEmpty ? '(no output)' : result!.trimRight());
       }
     } on PlatformException catch (e) {
-      output.add('Error: ${e.message ?? e.code}');
+      output.add('Error: \${e.message ?? e.code}');
     } catch (e) {
-      output.add('Command unavailable: $e');
+      output.add('Command unavailable: \$e');
     }
     if (mounted) setState(() => busy = false);
   }
@@ -62,9 +62,9 @@ class _StudioHomeState extends State<StudioHome> {
     try {
       final path = await _channel.invokeMethod<String>('saveFile', {'name': fileName, 'content': source});
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Saved: ${path ?? fileName}')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Saved: \${path ?? fileName}')));
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: \$e')));
     }
   }
 
@@ -121,7 +121,7 @@ class _StudioHomeState extends State<StudioHome> {
     )),
     Padding(padding: const EdgeInsets.fromLTRB(14, 0, 14, 12), child: Row(children: [
       Expanded(child: OutlinedButton.icon(onPressed: saveFile, icon: const Icon(Icons.save), label: const Text('Save'))),
-      const SizedBox(width: 10), Expanded(child: FilledButton.icon(onPressed: () { setState(() => tab = 1); command.text = 'python $fileName'; }, icon: const Icon(Icons.play_arrow), label: const Text('Run'))),
+      const SizedBox(width: 10), Expanded(child: FilledButton.icon(onPressed: () { setState(() => tab = 1); command.text = 'python \$fileName'; }, icon: const Icon(Icons.play_arrow), label: const Text('Run'))),
     ])),
   ]);
 
@@ -129,10 +129,10 @@ class _StudioHomeState extends State<StudioHome> {
     Expanded(child: Container(
       margin: const EdgeInsets.fromLTRB(14, 0, 14, 10), padding: const EdgeInsets.all(13), width: double.infinity,
       decoration: BoxDecoration(color: const Color(0xFF05090D), border: Border.all(color: const Color(0xFF26313C)), borderRadius: BorderRadius.circular(12)),
-      child: ListView(children: output.map((line) => Padding(padding: const EdgeInsets.only(bottom: 7), child: SelectableText(line, style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: line.startsWith('$') ? const Color(0xFF55E69A) : const Color(0xFFD1DBE5)))).toList()),
+      child: ListView(children: output.map((line) => Padding(padding: const EdgeInsets.only(bottom: 7), child: SelectableText(line, style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: line.startsWith('\$') ? const Color(0xFF55E69A) : const Color(0xFFD1DBE5)))).toList()),
     )),
     Padding(padding: const EdgeInsets.fromLTRB(14, 0, 14, 14), child: Row(children: [
-      const Text('$', style: TextStyle(color: Color(0xFF55E69A), fontWeight: FontWeight.bold, fontSize: 18)), const SizedBox(width: 9),
+      const Text('\$', style: TextStyle(color: Color(0xFF55E69A), fontWeight: FontWeight.bold, fontSize: 18)), const SizedBox(width: 9),
       Expanded(child: TextField(controller: command, onSubmitted: (_) => runCommand(), style: const TextStyle(fontFamily: 'monospace'), decoration: const InputDecoration(hintText: 'Enter command...', isDense: true, border: OutlineInputBorder()))),
       const SizedBox(width: 8), IconButton.filled(onPressed: busy ? null : runCommand, icon: const Icon(Icons.arrow_upward)),
     ])),
