@@ -1,0 +1,51 @@
+name: Build StromX Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'pubspec.yaml'
+      - 'tool/MainActivity.kt'
+      - '.github/workflows/android-apk.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Generate Android platform scaffold
+        run: |
+          flutter create --platforms=android --org com.stromx --project-name stromx_ide /tmp/stromx_scaffold
+          mkdir -p android
+          cp -R /tmp/stromx_scaffold/android/. android/
+          mkdir -p android/app/src/main/kotlin/com/stromx/stromx_ide
+          cp tool/MainActivity.kt android/app/src/main/kotlin/com/stromx/stromx_ide/MainActivity.kt
+      - name: Resolve packages
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze --no-pub
+      - name: Build release APK
+        run: flutter build apk --release
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: stromx-code-studio-release
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
